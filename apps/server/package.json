@@ -20,13 +20,17 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:migrate":"prisma migrate dev"
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "^4.10.1",
+    "argon2": "^0.30.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "database": "0.0.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

@@ -1,6 +1,7 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
+import { CreateEventDto } from './dto/create-event.dto';
 import { EventService } from './event.service';
 @Controller('event')
 export class EventController {
@@ -9,8 +10,17 @@ export class EventController {
   @Get('user-managed-events')
   async userManagedEvents(
     @GetUser('id') userId: string,
-    @Query('showEnded') showEnded: boolean = false,
+    @Query('showEnded') showEnded: boolean,
   ) {
     return await this.eventService.userManagedEvents(userId, showEnded);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('create')
+  async createEvent(
+    @GetUser('id') userId: string,
+    @Body() dto: CreateEventDto,
+  ) {
+    return await this.eventService.createEvent(dto, userId);
   }
 }

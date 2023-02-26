@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -14,6 +18,26 @@ export class EventService {
         status: 'AVAILABLE',
         creatorId: userId,
       },
+    });
+
+    return event;
+  }
+
+  async deleteEvent(id: string, userId: string) {
+    const event = await this.prisma.event.findUnique({
+      where: { id },
+    });
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    if (event.creatorId !== userId) {
+      throw new UnauthorizedException('You are not the creator of this event');
+    }
+
+    await this.prisma.event.delete({
+      where: { id },
     });
 
     return event;

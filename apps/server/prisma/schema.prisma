@@ -79,6 +79,7 @@ model Event {
 }
 
 enum SlotStatus {
+  
   AVAILABLE
   FULL
   CANCELLED
@@ -97,6 +98,10 @@ model Slot {
   eventId String
 
   date DateTime
+
+  booking Boolean @default(false)
+
+  autoStartEndBooking Boolean @default(false)
 
   status SlotStatus
 

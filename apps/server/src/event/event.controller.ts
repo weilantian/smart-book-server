@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -22,5 +31,14 @@ export class EventController {
     @Body() dto: CreateEventDto,
   ) {
     return await this.eventService.createEvent(dto, userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':id')
+  async deleteEvent(
+    @GetUser('id') userId: string,
+    @Param('id') eventId: string,
+  ) {
+    return await this.eventService.deleteEvent(eventId, userId);
   }
 }

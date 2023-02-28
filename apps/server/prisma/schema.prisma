@@ -38,12 +38,20 @@ enum EventStatus {
   ENDED
 }
 
+enum InviteRole {
+  HOST
+  PARTICIPATOR
+}
+
+
 model Invites {
   id String @id @default(uuid())
   message String
   email String
   event Event @relation(fields: [eventId], references: [id])
   eventId String
+  expired Boolean @default(false)
+
 
   inviter User @relation(fields: [inviterId], references: [id],"inviter") 
   inviterId String
@@ -74,6 +82,7 @@ model Event {
 
   bookingStartAt DateTime @default(now())
   bookingEndAt DateTime @default(now())
+  autoStartEndBooking Boolean @default(false)
   
   
 }
@@ -97,11 +106,12 @@ model Slot {
   event Event @relation(fields: [eventId], references: [id])
   eventId String
 
-  date DateTime
+  startDate DateTime
+  endDate DateTime
 
   booking Boolean @default(false)
 
-  autoStartEndBooking Boolean @default(false)
+
 
   status SlotStatus
 

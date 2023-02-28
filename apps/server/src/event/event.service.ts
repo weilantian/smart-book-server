@@ -43,6 +43,39 @@ export class EventService {
     return event;
   }
 
+  async getEvent(id: string, userId: string) {
+    const event = await this.prisma.event.findFirst({
+      where: {
+        id,
+        OR: [
+          { participators: { some: { id: userId } } },
+          { hosts: { some: { id: userId } } },
+          { creatorId: userId },
+        ],
+      },
+      include: {
+        slots: true,
+        hosts: true,
+      },
+    });
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    let role = 'PARTICIPATOR';
+
+    if (event.creatorId === userId) {
+      role = 'CREATOR';
+    } else if (event.hosts.some((host) => host.id === userId)) {
+      role = 'HOST';
+    } else {
+      role = 'PARTICIPATOR';
+    }
+
+    return { ...event, role };
+  }
+
   async userManagedEvents(userId: string, showEnded: boolean) {
     const events = await this.prisma.event.findMany({
       where: {

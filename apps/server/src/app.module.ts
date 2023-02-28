@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { EventModule } from './event/event.module';
+import { SlotModule } from './slot/slot.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { EventModule } from './event/event.module';
     AuthModule,
     UserModule,
     EventModule,
+    SlotModule,
   ],
   controllers: [AppController],
   providers: [AppService],

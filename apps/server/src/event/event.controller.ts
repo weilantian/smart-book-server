@@ -41,4 +41,10 @@ export class EventController {
   ) {
     return await this.eventService.deleteEvent(eventId, userId);
   }
+
+  @UseGuards(JwtGuard)
+  @Get(':id')
+  async getEvent(@GetUser('id') userId: string, @Param('id') eventId: string) {
+    return await this.eventService.getEvent(eventId, userId);
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { CreateSlotDto } from './dto/create-slot.dto';
@@ -11,5 +11,14 @@ export class SlotController {
   @UseGuards(JwtGuard)
   async createSlot(@GetUser('id') userId: string, @Body() dto: CreateSlotDto) {
     return await this.slotService.createSlot(dto, userId);
+  }
+
+  @Get('/by-event')
+  @UseGuards(JwtGuard)
+  async getSlotsOfEvent(
+    @GetUser('id') userId: string,
+    @Query('eventId') eventId: string,
+  ) {
+    return await this.slotService.getSlotsOfEvent(eventId, userId);
   }
 }

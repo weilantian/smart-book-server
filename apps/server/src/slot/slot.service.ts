@@ -6,7 +6,7 @@ import { CreateSlotDto } from './dto/create-slot.dto';
 export class SlotService {
   constructor(private prisma: PrismaService) {}
   async createSlot(dto: CreateSlotDto, userId: string) {
-    const event = await this.getManagedEvent(dto.eventId, userId);
+    const event = await this.getManagedEvent(dto.eventId, userId, true);
 
     const slot = await this.prisma.slot.create({
       data: {
@@ -30,11 +30,27 @@ export class SlotService {
     return slot;
   }
 
-  async getManagedEvent(id: string, userId: string) {
+  async getSlotsOfEvent(eventId: string, userId: string) {
+    const event = await this.getManagedEvent(eventId, userId);
+
+    const slots = await this.prisma.slot.findMany({
+      where: {
+        eventId: event.id,
+      },
+    });
+
+    return slots;
+  }
+
+  async getManagedEvent(id: string, userId: string, adminOnly = false) {
     const event = await this.prisma.event.findFirst({
       where: {
         id,
-        OR: [{ hosts: { some: { id: userId } } }, { creatorId: userId }],
+        OR: [
+          { hosts: { some: { id: userId } } },
+          { creatorId: userId },
+          adminOnly ? undefined : { participators: { some: { id: userId } } },
+        ],
       },
     });
 

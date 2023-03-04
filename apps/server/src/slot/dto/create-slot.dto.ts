@@ -1,4 +1,10 @@
-import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsDateString,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 export class CreateSlotDto {
   @IsString()
@@ -7,10 +13,10 @@ export class CreateSlotDto {
   @IsNumber()
   availableParticipatorNum: number;
 
-  @IsDate()
+  @IsDateString()
   startDate: Date;
 
-  @IsDate()
+  @IsDateString()
   endDate: Date;
 
   @IsBoolean()

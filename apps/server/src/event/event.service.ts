@@ -54,7 +54,6 @@ export class EventService {
         ],
       },
       include: {
-        slots: true,
         hosts: true,
       },
     });
@@ -72,6 +71,8 @@ export class EventService {
     } else {
       role = 'PARTICIPATOR';
     }
+
+    delete event.hosts;
 
     return { ...event, role };
   }

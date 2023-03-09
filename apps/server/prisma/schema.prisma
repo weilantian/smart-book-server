@@ -112,6 +112,9 @@ model Slot {
   startDate DateTime
   endDate DateTime
 
+  updatedAt DateTime @updatedAt @default(now())
+  createdAt DateTime @default(now())
+
   booking Boolean @default(false)
 
 

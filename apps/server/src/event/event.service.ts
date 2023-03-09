@@ -45,6 +45,9 @@ export class EventService {
 
   async getEvent(id: string, userId: string) {
     const event = await this.prisma.event.findFirst({
+      orderBy: {
+        createdAt: 'desc',
+      },
       where: {
         id,
         OR: [
@@ -79,6 +82,9 @@ export class EventService {
 
   async userManagedEvents(userId: string, showEnded: boolean) {
     const events = await this.prisma.event.findMany({
+      orderBy: {
+        createdAt: 'asc',
+      },
       where: {
         NOT: {
           status: showEnded ? undefined : 'ENDED',

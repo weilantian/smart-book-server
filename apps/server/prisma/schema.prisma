@@ -61,6 +61,9 @@ model Invites {
 }
 
 model Event {
+
+  updatedAt DateTime @updatedAt @default(now())
+  createdAt DateTime @default(now())
   
   
   id        String      @id @default(uuid())

@@ -37,9 +37,34 @@ export class SlotService {
       where: {
         eventId: event.id,
       },
+      include: {
+        _count: {
+          select: {
+            participators: true,
+          },
+        },
+        host: {
+          select: {
+            id: true,
+            name: true,
+            profileImgUrl: true,
+          },
+        },
+        participators: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
-    return slots;
+    return slots.map((slot) => ({
+      ...slot,
+      participatorNum: slot._count.participators,
+      booked: slot.participators.some(
+        (participator) => participator.id === userId,
+      ),
+    }));
   }
 
   async getManagedEvent(id: string, userId: string, adminOnly = false) {

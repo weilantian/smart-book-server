@@ -1,105 +1,105 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+// import {
+//   Injectable,
+//   NotFoundException,
+//   UnauthorizedException,
+// } from '@nestjs/common';
 
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateEventDto } from './dto/create-event.dto';
+// import { PrismaService } from 'src/prisma/prisma.service';
+// import { CreateEventDto } from './dto/create-event.dto';
 
-@Injectable()
-export class EventService {
-  constructor(private prisma: PrismaService) {}
+// @Injectable()
+// export class EventService {
+//   constructor(private prisma: PrismaService) {}
 
-  async createEvent(dto: CreateEventDto, userId: string) {
-    const event = await this.prisma.event.create({
-      data: {
-        ...dto,
-        status: 'AVAILABLE',
-        creatorId: userId,
-      },
-    });
+//   async createEvent(dto: CreateEventDto, userId: string) {
+//     const event = await this.prisma.event.create({
+//       data: {
+//         ...dto,
+//         status: 'AVAILABLE',
+//         creatorId: userId,
+//       },
+//     });
 
-    return event;
-  }
+//     return event;
+//   }
 
-  async deleteEvent(id: string, userId: string) {
-    const event = await this.prisma.event.findUnique({
-      where: { id },
-    });
+//   async deleteEvent(id: string, userId: string) {
+//     const event = await this.prisma.event.findUnique({
+//       where: { id },
+//     });
 
-    if (!event) {
-      throw new NotFoundException('Event not found');
-    }
+//     if (!event) {
+//       throw new NotFoundException('Event not found');
+//     }
 
-    if (event.creatorId !== userId) {
-      throw new UnauthorizedException('You are not the creator of this event');
-    }
+//     if (event.creatorId !== userId) {
+//       throw new UnauthorizedException('You are not the creator of this event');
+//     }
 
-    await this.prisma.event.delete({
-      where: { id },
-    });
+//     await this.prisma.event.delete({
+//       where: { id },
+//     });
 
-    return event;
-  }
+//     return event;
+//   }
 
-  async getEvent(id: string, userId: string) {
-    const event = await this.prisma.event.findFirst({
-      orderBy: {
-        createdAt: 'desc',
-      },
-      where: {
-        id,
-        OR: [
-          { participators: { some: { id: userId } } },
-          { hosts: { some: { id: userId } } },
-          { creatorId: userId },
-        ],
-      },
-      include: {
-        hosts: true,
-      },
-    });
+//   async getEvent(id: string, userId: string) {
+//     const event = await this.prisma.event.findFirst({
+//       orderBy: {
+//         createdAt: 'desc',
+//       },
+//       where: {
+//         id,
+//         OR: [
+//           { participators: { some: { id: userId } } },
+//           { hosts: { some: { id: userId } } },
+//           { creatorId: userId },
+//         ],
+//       },
+//       include: {
+//         hosts: true,
+//       },
+//     });
 
-    if (!event) {
-      throw new NotFoundException('Event not found');
-    }
+//     if (!event) {
+//       throw new NotFoundException('Event not found');
+//     }
 
-    let role = 'PARTICIPATOR';
+//     let role = 'PARTICIPATOR';
 
-    if (event.creatorId === userId) {
-      role = 'CREATOR';
-    } else if (event.hosts.some((host) => host.id === userId)) {
-      role = 'HOST';
-    } else {
-      role = 'PARTICIPATOR';
-    }
+//     if (event.creatorId === userId) {
+//       role = 'CREATOR';
+//     } else if (event.hosts.some((host) => host.id === userId)) {
+//       role = 'HOST';
+//     } else {
+//       role = 'PARTICIPATOR';
+//     }
 
-    delete event.hosts;
+//     delete event.hosts;
 
-    return { ...event, role };
-  }
+//     return { ...event, role };
+//   }
 
-  async userManagedEvents(userId: string, showEnded: boolean) {
-    const events = await this.prisma.event.findMany({
-      orderBy: {
-        createdAt: 'asc',
-      },
-      where: {
-        NOT: {
-          status: showEnded ? undefined : 'ENDED',
-        },
-        OR: [
-          { creatorId: userId },
-          {
-            hosts: {
-              some: { id: userId },
-            },
-          },
-        ],
-      },
-    });
+//   async userManagedEvents(userId: string, showEnded: boolean) {
+//     const events = await this.prisma.event.findMany({
+//       orderBy: {
+//         createdAt: 'asc',
+//       },
+//       where: {
+//         NOT: {
+//           status: showEnded ? undefined : 'ENDED',
+//         },
+//         OR: [
+//           { creatorId: userId },
+//           {
+//             hosts: {
+//               some: { id: userId },
+//             },
+//           },
+//         ],
+//       },
+//     });
 
-    return events;
-  }
-}
+//     return events;
+//   }
+// }

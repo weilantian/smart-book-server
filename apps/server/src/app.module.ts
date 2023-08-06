@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { EventModule } from './event/event.module';
-import { SlotModule } from './slot/slot.module';
+//import { SlotModule } from './slot/slot.module';
 import { IcsModule } from './ics/ics.module';
 
 @Module({
@@ -18,7 +18,7 @@ import { IcsModule } from './ics/ics.module';
     AuthModule,
     UserModule,
     EventModule,
-    SlotModule,
+
     IcsModule,
   ],
   controllers: [AppController],

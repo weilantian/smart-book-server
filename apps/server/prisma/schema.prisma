@@ -37,24 +37,11 @@ enum InviteRole {
   PARTICIPATOR
 }
 
-
-enum SlotStatus {
-  
-  AVAILABLE
-  FULL
-  CANCELLED
+enum BookableType {
+  RECURRING
+  ONE_TIME
 }
 
-model Event {
-  id String @id @default(uuid())
-
-  name String
-  description String
-  location String
-
-  
-
-}
 
 model Bookable {
   id String @id @default(uuid())
@@ -63,7 +50,7 @@ model Bookable {
   description String
   location String
 
-  avavailableSlots AvailableSlot[]
+  availableSlots AvailableSlot[]
   bookedSlots BookedSlot[]
 
 
@@ -73,8 +60,9 @@ model Bookable {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  
+  type BookableType
 
+  visible Boolean @default(true)
 }
 
 model AvailableSlot {

@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { EventModule } from './event/event.module';
 //import { SlotModule } from './slot/slot.module';
 import { IcsModule } from './ics/ics.module';
+import BookableModule from './bookable/bookable.module';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { IcsModule } from './ics/ics.module';
     AuthModule,
     UserModule,
     EventModule,
-
+    BookableModule,
     IcsModule,
   ],
   controllers: [AppController],

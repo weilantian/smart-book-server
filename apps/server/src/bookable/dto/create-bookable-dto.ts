@@ -1,4 +1,4 @@
-import { IsArray, IsDateString, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsEnum, IsString } from 'class-validator';
 
 class AvailableSlotDto {
   @IsDateString()
@@ -20,4 +20,7 @@ export class CreateBookableDto {
 
   @IsArray()
   availableSlots: AvailableSlotDto[];
+
+  @IsEnum(['ONE_TIME', 'RECURRING'])
+  type: 'ONE_TIME' | 'RECURRING';
 }

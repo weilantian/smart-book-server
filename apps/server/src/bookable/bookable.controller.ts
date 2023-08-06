@@ -3,8 +3,10 @@ import { BookableService } from './bookable.service';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { CreateBookableDto } from './dto/create-bookable-dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('bookable')
+@ApiBearerAuth()
 export class BookableController {
   constructor(private bookableService: BookableService) {}
 

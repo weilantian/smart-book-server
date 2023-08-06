@@ -9,6 +9,7 @@ import { EventModule } from './event/event.module';
 //import { SlotModule } from './slot/slot.module';
 import { IcsModule } from './ics/ics.module';
 import BookableModule from './bookable/bookable.module';
+import BookedSlotsModule from './booked-slots/booked-slots.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import BookableModule from './bookable/bookable.module';
     EventModule,
     BookableModule,
     IcsModule,
+    BookedSlotsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

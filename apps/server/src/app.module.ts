@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
@@ -23,6 +23,7 @@ import BookedSlotsModule from './booked-slots/booked-slots.module';
     BookableModule,
     IcsModule,
     BookedSlotsModule,
+    CacheModule.register(),
   ],
   controllers: [AppController],
   providers: [AppService],

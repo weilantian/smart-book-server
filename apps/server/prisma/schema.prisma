@@ -63,6 +63,10 @@ model Bookable {
   type BookableType
 
   visible Boolean @default(true)
+
+  duration Int @default(3600)
+
+
 }
 
 model AvailableSlot {
@@ -95,6 +99,7 @@ model BookedSlot {
   id String @id @default(uuid())
 
   startTime DateTime
+  duration Int @default(3600)
   endTime DateTime
 
   bookableId String

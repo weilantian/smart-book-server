@@ -4,6 +4,7 @@ import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { CreateBookableDto } from './dto/create-bookable-dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { BookableDetailResponseDto } from './dto/bookable-response-dto';
 
 @Controller('bookable')
 @ApiBearerAuth()
@@ -20,8 +21,14 @@ export class BookableController {
   }
 
   @UseGuards(JwtGuard)
-  @Get('/:userId')
+  @Get('/user/:userId')
   async getAllVisibleBookablesByUserId(@Param('userId') userId: string) {
     return await this.bookableService.getAllVisibleBookablesByUserId(userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('/:id')
+  async getBookableDetails(@Param('id') id: string) {
+    return await this.bookableService.getBookableDetails(id);
   }
 }

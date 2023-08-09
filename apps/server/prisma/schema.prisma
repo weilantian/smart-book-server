@@ -64,7 +64,7 @@ model Bookable {
 
   visible Boolean @default(true)
 
-  duration Int @default(3600)
+  duration Int @default(1800000)
 
 
 }
@@ -99,7 +99,7 @@ model BookedSlot {
   id String @id @default(uuid())
 
   startTime DateTime
-  duration Int @default(3600)
+  duration Int @default(1800000)
   endTime DateTime
 
   bookableId String

@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  CacheInterceptor,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { BookableService } from './bookable.service';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
@@ -7,6 +16,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { BookableDetailResponseDto } from './dto/bookable-response-dto';
 
 @Controller('bookable')
+@UseInterceptors(CacheInterceptor)
 @ApiBearerAuth()
 export class BookableController {
   constructor(private bookableService: BookableService) {}

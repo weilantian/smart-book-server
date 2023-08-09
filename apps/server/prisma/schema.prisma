@@ -57,6 +57,8 @@ model Bookable {
   host User @relation(fields: [hostId], references: [id])
   hostId String
 
+  checkAvailability Boolean @default(true)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -80,19 +82,6 @@ model AvailableSlot {
 
 }
 
-model Attendee {
-  id String @id @default(uuid())
-
-  firstName String
-  lastName String
-  email String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  bookedSlots BookedSlot[]
-
-}
 
 
 model BookedSlot {
@@ -102,7 +91,7 @@ model BookedSlot {
   duration Int @default(1800000)
   endTime DateTime
 
-  bookableId String
+  bookableId String 
   bookable Bookable @relation(fields: [bookableId],references: [id])
 
   userId String
@@ -111,8 +100,10 @@ model BookedSlot {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  attendeeId String
-  attendee Attendee @relation(fields: [attendeeId],references: [id])
-  attendeeBookingRefrenceCode String
+  attendeeFirstName String @default("")
+  attendeeLastName String @default("")
+  attendeeEmail String @default("")
+  attendeeBookingReferenceCode String @default("")
+  attendeeBookingManagementToken String @default("")
 
 }

@@ -17,6 +17,9 @@ import BookedSlotsModule from './booked-slots/booked-slots.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    CacheModule.register({
+      isGlobal: true,
+    }),
     AuthModule,
     UserModule,
     EventModule,

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateBookableDto } from './dto/create-bookable-dto';
-import { BookableDetailResponseDto } from './dto/bookable-response-dto';
-import { computeBookableSlots } from 'src/utils/splitTime';
+import computeBookableSlots from 'src/utils/computBookableSlots';
+import { ScheduleBookingDto } from './dto/schedule-booking-dto';
 
 @Injectable()
 export class BookableService {
@@ -38,28 +38,78 @@ export class BookableService {
   }
 
   async getBookableDetails(id: string) {
-    const { bookedSlots, availableSlots, ...bookable } =
-      await this.prisma.bookable.findUnique({
+    const {
+      hostId,
+      checkAvailability,
+      bookedSlots,
+      availableSlots,
+      ...bookable
+    } = await this.prisma.bookable.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        availableSlots: true,
+        bookedSlots: true,
+      },
+    });
+
+    let bookedSlotsFromUser = [];
+
+    if (checkAvailability) {
+      bookedSlotsFromUser = await this.prisma.bookedSlot.findMany({
         where: {
-          id,
-        },
-        include: {
-          availableSlots: true,
-          bookedSlots: true,
+          bookableId: id,
+          user: {
+            id: hostId,
+          },
         },
       });
+    }
 
     const bookableSlots = computeBookableSlots(
       availableSlots.map((slot) => ({
         start: slot.startTime,
         end: slot.endTime,
       })),
-      bookedSlots.map((slot) => ({ start: slot.startTime, end: slot.endTime })),
+      bookedSlots
+        .concat(bookedSlotsFromUser)
+        .map((slot) => ({ start: slot.startTime, end: slot.endTime })),
       bookable.duration,
     );
 
     // Compute the available slots
 
     return { ...bookable, slots: bookableSlots };
+  }
+
+  async scheduleBooking(dto: ScheduleBookingDto, bookableId: string) {
+    const bookable = await this.prisma.bookable.findUnique({
+      where: {
+        id: bookableId,
+      },
+    });
+    //generate a booking reference code string contains 6 random characters
+    const bookingReferenceCode = Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
+    const booking = await this.prisma.bookedSlot.create({
+      data: {
+        ...dto,
+        user: {
+          connect: {
+            id: bookable.hostId,
+          },
+        },
+        bookable: {
+          connect: {
+            id: bookableId,
+          },
+        },
+        attendeeBookingReferenceCode: bookingReferenceCode,
+      },
+    });
+    return booking;
   }
 }

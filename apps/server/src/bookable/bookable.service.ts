@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateBookableDto } from './dto/create-bookable-dto';
 import computeBookableSlots from 'src/utils/computBookableSlots';
@@ -84,11 +84,53 @@ export class BookableService {
   }
 
   async scheduleBooking(dto: ScheduleBookingDto, bookableId: string) {
-    const bookable = await this.prisma.bookable.findUnique({
-      where: {
-        id: bookableId,
-      },
-    });
+    const { checkAvailability, bookedSlots, availableSlots, ...bookable } =
+      await this.prisma.bookable.findUnique({
+        where: {
+          id: bookableId,
+        },
+        include: {
+          availableSlots: true,
+          bookedSlots: true,
+        },
+      });
+
+    // Check if the bookable is still available
+    let bookedSlotsFromUser = [];
+
+    if (checkAvailability) {
+      bookedSlotsFromUser = await this.prisma.bookedSlot.findMany({
+        where: {
+          user: {
+            id: bookable.hostId,
+          },
+        },
+      });
+    }
+
+    const bookableSlots = computeBookableSlots(
+      availableSlots.map((slot) => ({
+        start: slot.startTime,
+        end: slot.endTime,
+      })),
+      bookedSlots
+        .concat(bookedSlotsFromUser)
+        .map((slot) => ({ start: slot.startTime, end: slot.endTime })),
+      bookable.duration,
+    );
+
+    console.log(dto.startTime);
+
+    const isSlotAvailable = bookableSlots.some(
+      (slot) =>
+        new Date(slot.start).getTime() === new Date(dto.startTime).getTime() &&
+        new Date(slot.end).getTime() === new Date(dto.endTime).getTime(),
+    );
+
+    if (!isSlotAvailable) {
+      throw new HttpException('The slot is not available', 400);
+    }
+
     //generate a booking reference code string contains 6 random characters
     const bookingReferenceCode = Math.random()
       .toString(36)

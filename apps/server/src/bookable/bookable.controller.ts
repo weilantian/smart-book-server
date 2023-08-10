@@ -14,6 +14,7 @@ import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { CreateBookableDto } from './dto/create-bookable-dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { BookableDetailResponseDto } from './dto/bookable-response-dto';
+import { ScheduleBookingDto } from './dto/schedule-booking-dto';
 
 @Controller('bookable')
 @UseInterceptors(CacheInterceptor)
@@ -40,5 +41,14 @@ export class BookableController {
   @Get('/:id')
   async getBookableDetails(@Param('id') id: string) {
     return await this.bookableService.getBookableDetails(id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('/:id/book')
+  async scheduleBooking(
+    @Body() dto: ScheduleBookingDto,
+    @Param('id') id: string,
+  ) {
+    return await this.bookableService.scheduleBooking(dto, id);
   }
 }

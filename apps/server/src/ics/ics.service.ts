@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import ics from 'ics';
+
 @Injectable()
 export class IcsService {
   getTestEvent() {

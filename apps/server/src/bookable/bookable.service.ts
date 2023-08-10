@@ -38,49 +38,56 @@ export class BookableService {
   }
 
   async getBookableDetails(id: string) {
-    const {
-      hostId,
-      checkAvailability,
-      bookedSlots,
-      availableSlots,
-      ...bookable
-    } = await this.prisma.bookable.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        availableSlots: true,
-        bookedSlots: true,
-      },
-    });
-
-    let bookedSlotsFromUser = [];
-
-    if (checkAvailability) {
-      bookedSlotsFromUser = await this.prisma.bookedSlot.findMany({
+    try {
+      const {
+        hostId,
+        checkAvailability,
+        bookedSlots,
+        availableSlots,
+        ...bookable
+      } = await this.prisma.bookable.findUniqueOrThrow({
         where: {
-          bookableId: id,
-          user: {
-            id: hostId,
-          },
+          id,
+        },
+        include: {
+          availableSlots: true,
+          bookedSlots: true,
         },
       });
+
+      let bookedSlotsFromUser = [];
+
+      if (checkAvailability) {
+        bookedSlotsFromUser = await this.prisma.bookedSlot.findMany({
+          where: {
+            bookableId: id,
+            user: {
+              id: hostId,
+            },
+          },
+        });
+      }
+
+      const bookableSlots = computeBookableSlots(
+        availableSlots.map((slot) => ({
+          start: slot.startTime,
+          end: slot.endTime,
+        })),
+        bookedSlots
+          .concat(bookedSlotsFromUser)
+          .map((slot) => ({ start: slot.startTime, end: slot.endTime })),
+        bookable.duration,
+      );
+
+      // Compute the available slots
+
+      return { ...bookable, slots: bookableSlots };
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException('Bookable not found', 404);
+      }
+      throw error;
     }
-
-    const bookableSlots = computeBookableSlots(
-      availableSlots.map((slot) => ({
-        start: slot.startTime,
-        end: slot.endTime,
-      })),
-      bookedSlots
-        .concat(bookedSlotsFromUser)
-        .map((slot) => ({ start: slot.startTime, end: slot.endTime })),
-      bookable.duration,
-    );
-
-    // Compute the available slots
-
-    return { ...bookable, slots: bookableSlots };
   }
 
   async scheduleBooking(dto: ScheduleBookingDto, bookableId: string) {

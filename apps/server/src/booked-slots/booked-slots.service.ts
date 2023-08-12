@@ -1,14 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as crypto from 'crypto';
+import GetUserBookedSlotsDto from './dto/getUserBookedSlots.dto';
 
 @Injectable()
 export class BookedSlotsService {
   constructor(private prisma: PrismaService) {}
-  async getAllBookedSlotsByUserId(userId: string) {
+  async getAllBookedSlotsByUserId(dto: GetUserBookedSlotsDto, userId: string) {
     return await this.prisma.bookedSlot.findMany({
       where: {
         userId: userId,
+        startTime: {
+          gte: dto.startDate,
+        },
+        endTime: {
+          lte: dto.endDate,
+        },
       },
     });
   }

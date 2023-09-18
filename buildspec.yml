@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: '20'
+  pre_build:
+    commands:
+      - echo Installing source NPM dependencies...
+      - yarn install
+  migrate_db:
+    commands:
+      - echo Migrating database...
+      - npm run db:push
+  build:
+    commands:
+      - echo Build started on `date`
+      - npm run build
+artifacts:
+  files:
+    - '**/*'

@@ -8,8 +8,6 @@ phases:
     commands:
       - echo Installing source NPM dependencies...
       - yarn install
-  migrate_db:
-    commands:
       - echo Migrating database...
       - npm run db:push
   build:

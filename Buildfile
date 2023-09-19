@@ -1,0 +1,1 @@
+make: npx prisma generate deploy

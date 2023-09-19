@@ -12,6 +12,8 @@ phases:
       - npm run db:push
   build:
     commands:
+      - echo DATABASE_URL=$DATABASE_URL
+      - echo JWT_SECRET=$JWT_SECRET
       - echo Build started on `date`
       - npm run build
 artifacts:

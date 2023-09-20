@@ -3,9 +3,12 @@ FROM node:18
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+COPY yarn.lock ./
 
-RUN yarn install --production
+ENV DATABASE_URL=postgres://$RDS_USER:$RDS_PASS@$RDS_HOST:5432/$RDS_DB?sslcert=ap-southeast-2-bundle.pem
+ENV JWT_SECRET=$JWT_SECRET
 
+RUN npm install
 COPY . .
 
 #RUN npx prisma migrate deploy

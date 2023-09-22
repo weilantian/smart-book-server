@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -26,6 +25,9 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/smart-book-server:${{ github.sha }}
 
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
         with:

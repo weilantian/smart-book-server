@@ -36,4 +36,4 @@ jobs:
             docker stop smart-book-server || true
             docker rm ${{ secrets.DOCKER_USERNAME }}/smart-book-server || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/smart-book-server:${{ github.sha }}
-            docker run -d --name smart-book-server -p 3080:3080 -e JWT_SECRET=${{ secrets.JWT_SECRET }} -e DATABASE_URL=${{ secrets.DATABASE_URL }} ericweifyi/smart-book-server:${{ github.sha }}
+            docker run -d --restart unless-stopped --name smart-book-server -p 3080:3080 -e JWT_SECRET=${{ secrets.JWT_SECRET }} -e DATABASE_URL=${{ secrets.DATABASE_URL }} ericweifyi/smart-book-server:${{ github.sha }}

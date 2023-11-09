@@ -31,18 +31,22 @@ export class BookableController {
   }
 
   @UseGuards(JwtGuard)
+  @Get('/user')
+  async getCurrentUserBookables(@GetUser('id') userId: string) {
+    return await this.bookableService.getAllVisibleBookablesByUserId(userId);
+  }
+
+  @UseGuards(JwtGuard)
   @Get('/user/:userId')
   async getAllVisibleBookablesByUserId(@GetUser('id') userId: string) {
     return await this.bookableService.getAllVisibleBookablesByUserId(userId);
   }
 
-  @UseGuards(JwtGuard)
   @Get('/:id')
   async getBookableDetails(@Param('id') id: string) {
     return await this.bookableService.getBookableDetails(id);
   }
 
-  @UseGuards(JwtGuard)
   @Post('/:id/book')
   async scheduleBooking(
     @Body() dto: ScheduleBookingDto,

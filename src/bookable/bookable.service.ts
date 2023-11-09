@@ -57,10 +57,15 @@ export class BookableService {
 
       let bookedSlotsFromUser = [];
 
+      const targetDate = new Date();
+      targetDate.setHours(0, 0, 0, 0);
+
       if (checkAvailability) {
         bookedSlotsFromUser = await this.prisma.bookedSlot.findMany({
           where: {
-            bookableId: id,
+            startTime: {
+              gte: targetDate,
+            },
             user: {
               id: hostId,
             },
@@ -102,6 +107,22 @@ export class BookableService {
         },
       });
 
+    // Check if the email is already used for this bookable
+
+    const isEmailUsed = await this.prisma.bookedSlot.findFirst({
+      where: {
+        bookableId,
+        attendeeEmail: dto.attendeeEmail,
+      },
+    });
+
+    if (isEmailUsed) {
+      throw new HttpException(
+        'The email is already used for this bookable',
+        400,
+      );
+    }
+
     // Check if the bookable is still available
     let bookedSlotsFromUser = [];
 
@@ -125,8 +146,6 @@ export class BookableService {
         .map((slot) => ({ start: slot.startTime, end: slot.endTime })),
       bookable.duration,
     );
-
-    console.log(dto.startTime);
 
     const isSlotAvailable = bookableSlots.some(
       (slot) =>

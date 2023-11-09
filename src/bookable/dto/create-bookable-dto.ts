@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsDateString, IsEnum, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 class AvailableSlotDto {
   @ApiProperty({
@@ -33,6 +39,9 @@ export class CreateBookableDto {
     type: [AvailableSlotDto],
   })
   availableSlots: AvailableSlotDto[];
+
+  @IsNumber()
+  duration: number;
 
   @IsEnum(['ONE_TIME', 'RECURRING'])
   @ApiProperty({

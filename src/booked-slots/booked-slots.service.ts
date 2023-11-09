@@ -17,6 +17,14 @@ export class BookedSlotsService {
           lte: dto.endDate,
         },
       },
+      include: {
+        bookable: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
   }
 

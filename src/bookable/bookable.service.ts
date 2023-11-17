@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateBookableDto } from './dto/create-bookable-dto';
+import { CreateUpdateBookableDto } from './dto/create-bookable-dto';
 import computeBookableSlots from 'src/utils/computBookableSlots';
 import { ScheduleBookingDto } from './dto/schedule-booking-dto';
 
@@ -8,7 +8,7 @@ import { ScheduleBookingDto } from './dto/schedule-booking-dto';
 export class BookableService {
   constructor(private prisma: PrismaService) {}
 
-  async createBookable(dto: CreateBookableDto, userId: string) {
+  async createBookable(dto: CreateUpdateBookableDto, userId: string) {
     const { availableSlots, ...bookableDetail } = dto;
 
     const bookable = await this.prisma.bookable.create({
@@ -37,7 +37,28 @@ export class BookableService {
     });
   }
 
-  async getBookableDetails(id: string) {
+  async getBookableDetails(id: string, userId: string) {
+    try {
+      const bookable = await this.prisma.bookable.findFirst({
+        where: {
+          id,
+          hostId: userId,
+        },
+        include: {
+          availableSlots: true,
+        },
+      });
+
+      return bookable;
+    } catch (e) {
+      if (e.code === 'P2025') {
+        throw new HttpException('Bookable not found', 404);
+      }
+      throw e;
+    }
+  }
+
+  async getBookable(id: string) {
     try {
       const {
         hostId,
@@ -170,6 +191,8 @@ export class BookableService {
             id: bookable.hostId,
           },
         },
+        title: bookable.name,
+        description: bookable.description,
         bookable: {
           connect: {
             id: bookableId,
@@ -179,5 +202,73 @@ export class BookableService {
       },
     });
     return booking;
+  }
+
+  async updateBookable(
+    id: string,
+    dto: CreateUpdateBookableDto,
+    userId: string,
+  ) {
+    const { availableSlots, ...bookableDetail } = dto;
+
+    const bookable = await this.prisma.bookable.update({
+      where: {
+        id,
+      },
+      data: {
+        ...bookableDetail,
+        host: {
+          connect: {
+            id: userId,
+          },
+        },
+        availableSlots: {
+          create: [...availableSlots],
+        },
+      },
+    });
+
+    return bookable;
+  }
+
+  async deleteBookable(id: string, userId: string) {
+    try {
+      const bookable = await this.prisma.bookable.findFirst({
+        where: {
+          id,
+          hostId: userId,
+        },
+        include: {
+          _count: {
+            select: {
+              bookedSlots: true,
+            },
+          },
+        },
+      });
+
+      if (!bookable) {
+        throw new HttpException('Bookable not found', 404);
+      }
+
+      await this.prisma.availableSlot.deleteMany({
+        where: {
+          bookableId: id,
+        },
+      });
+
+      await this.prisma.bookable.delete({
+        where: {
+          id,
+        },
+      });
+
+      return bookable;
+    } catch (e) {
+      if (e.code === 'P2025') {
+        throw new HttpException('Bookable not found', 404);
+      }
+      throw e;
+    }
   }
 }

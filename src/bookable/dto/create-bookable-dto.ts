@@ -21,7 +21,7 @@ class AvailableSlotDto {
   endTime: string;
 }
 
-export class CreateBookableDto {
+export class CreateUpdateBookableDto {
   @IsString()
   @ApiProperty()
   name: string;

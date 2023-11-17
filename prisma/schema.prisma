@@ -91,8 +91,11 @@ model BookedSlot {
   duration Int @default(1800000)
   endTime DateTime
 
-  bookableId String 
-  bookable Bookable @relation(fields: [bookableId],references: [id])
+  title String @default("")
+  description String @default("")
+
+  bookableId String?
+  bookable Bookable? @relation(fields: [bookableId],references: [id])
 
   userId String
   user User @relation(fields: [userId],references: [id])

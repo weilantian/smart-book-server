@@ -8,6 +8,8 @@ import {
 } from 'class-validator';
 
 class AvailableSlotDto {
+  id?: string;
+
   @ApiProperty({
     format: 'date-time',
   })

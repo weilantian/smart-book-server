@@ -211,6 +211,12 @@ export class BookableService {
   ) {
     const { availableSlots, ...bookableDetail } = dto;
 
+    await this.prisma.availableSlot.deleteMany({
+      where: {
+        bookableId: id,
+      },
+    });
+
     const bookable = await this.prisma.bookable.update({
       where: {
         id,
@@ -223,7 +229,16 @@ export class BookableService {
           },
         },
         availableSlots: {
-          create: [...availableSlots],
+          connectOrCreate: [
+            ...availableSlots.map((slot) => ({
+              where: {
+                id: slot.id,
+              },
+              create: {
+                ...slot,
+              },
+            })),
+          ],
         },
       },
     });

@@ -10,8 +10,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { BookableService } from './bookable.service';
-import { JwtGuard } from 'src/auth/guard/jwt.guard';
-import { GetUser } from 'src/auth/decorator/get-user.decorator';
+import { JwtGuard } from '../auth/guard/jwt.guard';
+import { GetUser } from '../auth/decorator/get-user.decorator';
 import { CreateUpdateBookableDto } from './dto/create-bookable-dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { ScheduleBookingDto } from './dto/schedule-booking-dto';

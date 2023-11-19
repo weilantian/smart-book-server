@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateUpdateBookableDto } from './dto/create-bookable-dto';
-import computeBookableSlots from 'src/utils/computBookableSlots';
+import computeBookableSlots from '../utils/computBookableSlots';
 import { ScheduleBookingDto } from './dto/schedule-booking-dto';
 
 @Injectable()
@@ -266,19 +266,18 @@ export class BookableService {
         throw new HttpException('Bookable not found', 404);
       }
 
-      await this.prisma.availableSlot.deleteMany({
-        where: {
-          bookableId: id,
-        },
-      });
-
-      await this.prisma.bookable.delete({
-        where: {
-          id,
-        },
-      });
-
-      return bookable;
+      await this.prisma.$transaction([
+        this.prisma.availableSlot.deleteMany({
+          where: {
+            bookableId: id,
+          },
+        }),
+        this.prisma.bookable.delete({
+          where: {
+            id,
+          },
+        }),
+      ]);
     } catch (e) {
       if (e.code === 'P2025') {
         throw new HttpException('Bookable not found', 404);

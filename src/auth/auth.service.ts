@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signup.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { LoginDto } from './dto/login.dto';
 

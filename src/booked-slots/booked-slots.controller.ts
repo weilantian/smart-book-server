@@ -2,15 +2,14 @@ import {
   CacheInterceptor,
   Controller,
   Get,
-  Post,
   Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { BookedSlotsService } from './booked-slots.service';
-import { GetUser } from 'src/auth/decorator/get-user.decorator';
+import { GetUser } from '../auth/decorator/get-user.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { JwtGuard } from 'src/auth/guard/jwt.guard';
+import { JwtGuard } from '../auth/guard/jwt.guard';
 import GetUserBookedSlotsDto from './dto/getUserBookedSlots.dto';
 
 @ApiBearerAuth()

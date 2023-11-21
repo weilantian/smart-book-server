@@ -8,10 +8,13 @@ import { randomUUID } from 'crypto';
 import * as argon from 'argon2';
 
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaClient } from '@prisma/client';
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let prismaService: DeepMockProxy<PrismaService>;
+  let prismaService: DeepMockProxy<{
+    [K in keyof PrismaClient]: Omit<PrismaClient[K], 'groupBy'>;
+  }>;
 
   const exampleUser = {
     name: 'Lantian',

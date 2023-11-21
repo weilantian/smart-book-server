@@ -11,12 +11,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Test with Node.js 14
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Test with Node.js 20
         uses: actions/setup-node@v3
         with:
           node-version: '20'
       - run: yarn
-      - run: yarn run test
+      - name: Test
+        run: yarn run test
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
   build:
     runs-on: ubuntu-latest

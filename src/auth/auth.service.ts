@@ -50,6 +50,7 @@ export class AuthService {
           password: hash,
         },
       });
+
       return this.signToken(user.id, user.email);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -57,6 +58,7 @@ export class AuthService {
           throw new ConflictException('Email already exists');
         }
       }
+      throw error;
     }
   }
 

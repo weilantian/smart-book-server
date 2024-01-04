@@ -200,6 +200,14 @@ export class BookableService {
         },
         attendeeBookingReferenceCode: bookingReferenceCode,
       },
+      include: {
+        bookable: {
+          select: {
+            location: true,
+            name: true,
+          },
+        },
+      },
     });
     return booking;
   }

@@ -39,7 +39,7 @@ export class BookableController {
 
   @UseGuards(JwtGuard)
   @Get('/user/:userId')
-  async getAllVisibleBookablesByUserId(@GetUser('id') userId: string) {
+  async getAllVisibleBookablesByUserId(@Param('userId') userId: string) {
     return await this.bookableService.getAllVisibleBookablesByUserId(userId);
   }
 
